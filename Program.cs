@@ -33,6 +33,9 @@ namespace SimpleKeyMan
                     case "update":
                         UpdateKey();
                         break;
+                    case "delete":
+                        DeleteKey();
+                        break;
                     case "setkey":
                         SetAPIKey();
                         break;
@@ -178,6 +181,18 @@ namespace SimpleKeyMan
             if (run)
             {
                 System.Console.WriteLine(ConfiguredHTTPClient.NewKey(email,spaces));
+            }
+        }
+
+        static void DeleteKey()
+        {
+            System.Console.Write("email: ");
+            string email = Console.ReadLine();
+            System.Console.WriteLine("Note that this action is IRREVERSIBLE");
+            System.Console.WriteLine("Are you sure you want to delete the key associated with '{0}'? (Y/N):",email);
+            if(Console.ReadLine().ToUpper()=="Y")
+            {
+                System.Console.WriteLine(ConfiguredHTTPClient.DeleteKey(email));
             }
         }
         

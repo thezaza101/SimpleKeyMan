@@ -80,6 +80,22 @@ namespace SimpleKeyMan
             }
             return value;
         }
+        public static string DeleteKey(string email)
+        {
+            string value;
+            try
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Program.Base64Encode(_apiKey));
+                var query = QueryBuilder("delete","email="+email);
+                value = _client.GetAsync(query).Result.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception e)
+            {
+                value = e.Message;
+            }
+            return value;
+        }
+        
         private static string ListString(string pramName, List<string> prams)
         {
             string output="";
