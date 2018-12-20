@@ -60,68 +60,47 @@ namespace SimpleKeyMan
 
             config c = new config();
 
-            bool foundDs = false;
-            bool foundKey = false;
+            Console.Write("Which envrioment: ");
+            string env = Console.ReadLine(); 
+            
 
-            c.dataserver = Environment.GetEnvironmentVariable("apigovauDataServer");
-            if(string.IsNullOrWhiteSpace(c.dataserver))
+            try
             {
-                System.Console.WriteLine("Error retrieveing dataserver from envrioment");
-            }
-            else
-            {
-                foundDs = true;
-            }
-            c.key = Environment.GetEnvironmentVariable("apigovauAPIKey");
-            if(string.IsNullOrWhiteSpace(c.key))
-            {
-                System.Console.WriteLine("Error retrieveing key from envrioment");
-            }
-            else
-            {
-                foundKey = true;
-            }
-             
+                System.Console.WriteLine("Setting config from file...");
+                StreamReader sr = new StreamReader("app."+env+".config");
+                string s = sr.ReadToEnd();
+                sr.Close();
 
-            if (!foundDs | !foundKey)
+                c = JsonConvert.DeserializeObject<config>(s);
+                c.dataserver = Base64Decode(c.dataserver);
+                c.key = Base64Decode(c.key);
+                System.Console.WriteLine("Done");
+
+            } 
+            catch
             {
-                try
+                System.Console.WriteLine("No config file found...");
+                System.Console.WriteLine("Enter dataserver url (this should end in \"/api/\"):");
+                string ds = Console.ReadLine().Trim();
+
+                System.Console.WriteLine("Enter your API key:");
+                string k = Console.ReadLine().Trim();
+                c.dataserver = ds;
+                c.key = k;
+
+                System.Console.WriteLine("Would you like to save this information for later use? (Y/N):");
+                if(Console.ReadLine().Trim().ToUpper()=="Y")
                 {
-                    System.Console.WriteLine("Setting config from file...");
-                    StreamReader sr = new StreamReader("app.config");
-                    string s = sr.ReadToEnd();
-                    sr.Close();
-
-                    c = JsonConvert.DeserializeObject<config>(s);
-                    c.dataserver = Base64Decode(c.dataserver);
-                    c.key = Base64Decode(c.key);
-                    System.Console.WriteLine("Done");
-
-                } 
-                catch
-                {
-                    System.Console.WriteLine("No config file found...");
-                    System.Console.WriteLine("Enter dataserver url (this should end in \"/api/\"):");
-                    string ds = Console.ReadLine().Trim();
-
-                    System.Console.WriteLine("Enter your API key:");
-                    string k = Console.ReadLine().Trim();
-                    c.dataserver = ds;
-                    c.key = k;
-
-                    System.Console.WriteLine("Would you like to save this information for later use? (Y/N):");
-                    if(Console.ReadLine().Trim().ToUpper()=="Y")
-                    {
-                        var config2 = new config();
-                        config2.key = Base64Encode(c.key);
-                        config2.dataserver = Base64Encode(c.dataserver);
-                        StreamWriter sw = new StreamWriter("app.config");
-                        sw.WriteLine(JsonConvert.SerializeObject(config2));
-                        sw.Close();
-                        System.Console.WriteLine("Configuration saved");
-                    }
+                    var config2 = new config();
+                    config2.key = Base64Encode(c.key);
+                    config2.dataserver = Base64Encode(c.dataserver);
+                    StreamWriter sw = new StreamWriter("app."+env+".config");
+                    sw.WriteLine(JsonConvert.SerializeObject(config2));
+                    sw.Close();
+                    System.Console.WriteLine("Configuration saved");
                 }
-            }
+                }
+            
             ConfiguredHTTPClient.setupClinet(c.dataserver,c.key);
         }
         static void ListSpaces()
