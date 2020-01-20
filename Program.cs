@@ -159,6 +159,9 @@ namespace SimpleKeyMan
             } 
             if (run)
             {
+                System.Console.WriteLine("Attempting to create key at " + ConfiguredHTTPClient._client.BaseAddress);
+                System.Console.WriteLine("Email: " + email);
+                System.Console.WriteLine("Spaces:" + spaceslist);
                 System.Console.WriteLine(ConfiguredHTTPClient.NewKey(email,spaces));
             }
         }

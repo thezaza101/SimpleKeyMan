@@ -16,6 +16,7 @@ namespace SimpleKeyMan
         {
             _client = new HttpClient();
             _client.BaseAddress = new Uri(DataServer);
+            System.Console.WriteLine(DataServer);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client.Timeout = new TimeSpan(0,0,30);
